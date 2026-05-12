@@ -1,0 +1,63 @@
+services:
+  gateway:
+    image: nginx:alpine
+    container_name: api_gateway
+    ports:
+      - "8080:80"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - loja_veloz_network
+    depends_on:
+      - pedidos
+      - estoque
+      - pagamentos
+
+  pedidos:
+    build:
+      context: ./pedidos
+      dockerfile: Dockerfile
+    container_name: servico_pedidos
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - loja_veloz_network
+
+  estoque:
+    build:
+      context: ./estoque
+      dockerfile: Dockerfile
+    container_name: servico_estoque
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - loja_veloz_network
+
+  pagamentos:
+    build:
+      context: ./pagamentos
+      dockerfile: Dockerfile
+    container_name: servico_pagamentos
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - loja_veloz_network
+
+  db:
+    image: postgres:15-alpine
+    container_name: servico_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: lojaveloz
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - loja_veloz_network
+
+networks:
+  loja_veloz_network:
+    driver: bridge
+
+volumes:
+  db_data:

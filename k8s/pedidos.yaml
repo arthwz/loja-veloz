@@ -1,0 +1,56 @@
+# k8s/pedidos.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: servico-pedidos
+spec:
+  replicas: 2  # Vamos rodar 2 cópias para garantir alta disponibilidade!
+  selector:
+    matchLabels:
+      app: pedidos
+  template:
+    metadata:
+      labels:
+        app: pedidos
+    spec:
+      containers:
+        - name: pedidos
+          image: loja-veloz-pedidos:v1
+          imagePullPolicy: Never  # Diz ao K8s para usar a imagem local que acabamos de criar
+          ports:
+            - containerPort: 5001
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          envFrom:
+            - configMapRef:
+                name: loja-veloz-config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pedidos
+spec:
+  selector:
+    app: pedidos
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
