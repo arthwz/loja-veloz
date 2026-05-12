@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-last
+    runs-on: ubuntu-lastest
 
     steps:
     - name: Baixar o codigo do repositório
