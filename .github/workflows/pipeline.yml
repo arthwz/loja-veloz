@@ -2,7 +2,7 @@ name: Loja Veloz CI/CD
 
 on:
   push:
-    branches: : [ "main" ]
+    branches: [ "main" ]
 
 jobs:
   build-and-test:
