@@ -23,7 +23,7 @@ jobs:
         pip install flask
         python -m py_compile pedidos/app.py
         python -m py_compile estoque/app.py
-        python -m py_complete pagamentos/app.py
+        python -m py_compite pagamentos/app.py
 
     - name: Build das Imagens Docker
       run: |
